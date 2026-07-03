@@ -1,64 +1,82 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct{
     char *name;
     char symbol;
 }Player;
 
-void boardPrinter();
-void checkWinner(bool *gameConcluded);
-void playerTurn(bool *gameConcluded);
-void play(Player first, Player second, char *boardSpots);
-void getName(char symbol, char *tmp);
+void boardPrinter(char *boardSpots);
+void checkWinner(bool *pGameConcluded);
+void playerTurn(Player player, char *boardSpots, bool *pGameConcluded);
+void play(Player first, Player second);
+void getName(char symbol, Player *pPlayer);
 
 int main(void){
-    char boardSpots[9] = {""};
-    char tmp[] = "";
+    char first = '\0';
+    Player xPlayer = {"", 'X'};
+    Player oPlayer = {"", 'O'};
 
     printf("}---- TIC-TAC-TOE ----{\n");
 
-    getName('X', tmp);
-    Player xPlayer = {tmp, 'X'};
-    getName('O', tmp);
-    Player oPlayer = {tmp, 'O'};
+    getName('X', &xPlayer);
+
+    if (xPlayer.name == NULL) {
+        return 1;
+    }
+
+    getName('O', &oPlayer);
+
+    if (oPlayer.name == NULL) {
+        return 1;
+    }
 
     do{
         printf("Who goes first, X or O?: ");
-        fgets(tmp, sizeof(tmp), stdin);
-        tmp[strlen(tmp) - 1] = '\0';
-    }while(strcmp(tmp, "X") != 0 && strcmp(tmp, "O") != 0);
+        first = getchar();
+    }while(first != 'X' && first != 'O');
 
-    printf("%s", xPlayer.name);
-    printf("%s", oPlayer.name);
-    printf("%s", tmp);
-   // (strcmp(tmp, "X") == 0) ? play(xPlayer, oPlayer, boardSpots) : play(oPlayer, xPlayer, boardSpots);
+    (first == 'X') ? play(xPlayer, oPlayer) : play(oPlayer, xPlayer);
+    free(xPlayer.name);
+    free(oPlayer.name);
+    xPlayer.name = NULL;
+    oPlayer.name = NULL;
 
     return 0;
 }
 
-void boardPrinter(){
+void boardPrinter(char *boardSpots){
+    
+}
+void checkWinner(bool *pGameConcluded){
 
 }
-void checkWinner(bool *gameConcluded){
-
+void playerTurn(Player player, char *boardSpots, bool *pGameConcluded){
+    int chosenSpot = 0;
+    do {
+        printf("Which spot, %s? (1-9): ", player.name);
+        scanf("%d", &chosenSpot); 
+    }while ((chosenSpot < 1 && chosenSpot > 9) && boardSpots[chosenSpot - 1] != "");
+    boardSpots[chosenSpot - 1] = player.symbol;
+    boardPrinter(boardSpots);
+    checkWinner(pGameConcluded);
 }
-void playerTurn(bool *gameConcluded){
-    boardPrinter();
-    checkWinner(gameConcluded);
-}
-void play(Player first, Player second, char *boardSpots){
-    bool gameConcluded = false;
+void play(Player first, Player second){
+    char boardSpots[9] = {""};
+    bool gameConcluded = true;
     do{
-        playerTurn(&gameConcluded);
-        if (!gameConcluded){ playerTurn(&gameConcluded);}
+        playerTurn(first, boardSpots, &gameConcluded);
+        if (!gameConcluded){ playerTurn(second, boardSpots, &gameConcluded);}
     }while(!gameConcluded);
 }
-void getName(char symbol, char *tmp){
+void getName(char symbol, Player *pPlayer){
+    char nameVar[31] = "";
     do{
         printf("Who will play with the %cs (30 characters maximum)?: ", symbol);
-        fgets(tmp, sizeof(tmp), stdin);
-        tmp[strlen(tmp) - 1] = '\0';
-    }while(strlen(tmp) > 30);
+        fgets(nameVar, sizeof(nameVar), stdin);
+        nameVar[strlen(nameVar) - 1] = '\0';
+    }while(strlen(nameVar) == 0);
+    pPlayer->name = strndup(nameVar, sizeof(nameVar)); // strndup DYNAMICALLY allocates memory so it should be freed.
 }
