@@ -48,7 +48,12 @@ int main(void){
 }
 
 void boardPrinter(char *boardSpots){
-    
+    for (int i = 0; i < 9; i++){
+        (boardSpots[i] == '\0') ? printf("   ") : printf(" %c ", boardSpots[i]);
+        if (i % 3 != 2) printf("|");
+        if (i % 3 == 2 && i < 8) printf("\n-----------\n");
+    }
+    printf("\n");
 }
 void checkWinner(bool *pGameConcluded){
 
@@ -57,14 +62,15 @@ void playerTurn(Player player, char *boardSpots, bool *pGameConcluded){
     int chosenSpot = 0;
     do {
         printf("Which spot, %s? (1-9): ", player.name);
-        scanf("%d", &chosenSpot); 
-    }while ((chosenSpot < 1 && chosenSpot > 9) && boardSpots[chosenSpot - 1] != "");
+        scanf("%i", &chosenSpot); 
+        getchar();
+    }while ((chosenSpot < 1 && chosenSpot > 9) || boardSpots[chosenSpot - 1] != '\0');
     boardSpots[chosenSpot - 1] = player.symbol;
     boardPrinter(boardSpots);
     checkWinner(pGameConcluded);
 }
 void play(Player first, Player second){
-    char boardSpots[9] = {""};
+    char boardSpots[9] = {"\0"};
     bool gameConcluded = true;
     do{
         playerTurn(first, boardSpots, &gameConcluded);
