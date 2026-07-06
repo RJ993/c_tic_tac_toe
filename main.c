@@ -10,6 +10,7 @@ typedef struct{
 
 void boardPrinter(char *boardSpots);
 void checkWinner(Player player, char *boardSpots, bool *pGameConcluded);
+void checkTie(char *boardSpots, bool *pGameConcluded);
 void playerTurn(Player player, char *boardSpots, bool *pGameConcluded);
 void play(Player first, Player second);
 void getName(char symbol, Player *pPlayer);
@@ -56,8 +57,6 @@ void boardPrinter(char *boardSpots){
     printf("\n\n");
 }
 void checkWinner(Player player, char *boardSpots, bool *pGameConcluded){
-    // A way to resolve ties could be tracking squares occupied and then if all 9 are filled with no winner, tie.
-
     const int winningCombos[8][3] = {
         {0, 1, 2},
         {3, 4, 5},
@@ -82,6 +81,17 @@ void checkWinner(Player player, char *boardSpots, bool *pGameConcluded){
         }
     }
 }
+void checkTie(char *boardSpots, bool *pGameConcluded){
+    if (*pGameConcluded) return;
+    bool everySpot = true;
+    for (int spotIn = 0; spotIn < 9; spotIn++){
+        if (boardSpots[spotIn] == '\0') everySpot = false;
+    }
+    if (everySpot) {
+        (*pGameConcluded) = true;
+        printf("Tie!\n");
+    }
+}
 void playerTurn(Player player, char *boardSpots, bool *pGameConcluded){
     int chosenSpot = 0;
     do {
@@ -92,6 +102,7 @@ void playerTurn(Player player, char *boardSpots, bool *pGameConcluded){
     boardSpots[chosenSpot - 1] = player.symbol;
     boardPrinter(boardSpots);
     checkWinner(player, boardSpots, pGameConcluded);
+    checkTie(boardSpots, pGameConcluded);
 }
 void play(Player first, Player second){
     char boardSpots[9] = {"\0"};
