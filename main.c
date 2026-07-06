@@ -9,7 +9,7 @@ typedef struct{
 }Player;
 
 void boardPrinter(char *boardSpots);
-void checkWinner(bool *pGameConcluded);
+void checkWinner(Player player, char *boardSpots, bool *pGameConcluded);
 void playerTurn(Player player, char *boardSpots, bool *pGameConcluded);
 void play(Player first, Player second);
 void getName(char symbol, Player *pPlayer);
@@ -19,7 +19,7 @@ int main(void){
     Player xPlayer = {"", 'X'};
     Player oPlayer = {"", 'O'};
 
-    printf("}---- TIC-TAC-TOE ----{\n");
+    printf("}---- TIC-TAC-TOE ----{\n\n");
 
     getName('X', &xPlayer);
 
@@ -53,10 +53,34 @@ void boardPrinter(char *boardSpots){
         if (i % 3 != 2) printf("|");
         if (i % 3 == 2 && i < 8) printf("\n-----------\n");
     }
-    printf("\n");
+    printf("\n\n");
 }
-void checkWinner(bool *pGameConcluded){
+void checkWinner(Player player, char *boardSpots, bool *pGameConcluded){
+    // A way to resolve ties could be tracking squares occupied and then if all 9 are filled with no winner, tie.
 
+    const int winningCombos[8][3] = {
+        {0, 1, 2},
+        {3, 4, 5},
+        {6, 7, 8},
+        {0, 3, 6},
+        {1, 4, 7},
+        {2, 5, 8},
+        {0, 4, 8},
+        {2, 4, 6},
+    };
+
+    for (int comboIn = 0; comboIn < 8; comboIn++){
+        if (!(*pGameConcluded)) {
+            bool everySpot = true;
+            for (int spotIn = 0; spotIn < 3; spotIn++){
+                if (boardSpots[winningCombos[comboIn][spotIn]] != player.symbol) everySpot = false;
+            }
+            if (everySpot) {
+                (*pGameConcluded) = true;
+                printf("%s has won!\n", player.name);
+            }
+        }
+    }
 }
 void playerTurn(Player player, char *boardSpots, bool *pGameConcluded){
     int chosenSpot = 0;
@@ -67,11 +91,11 @@ void playerTurn(Player player, char *boardSpots, bool *pGameConcluded){
     }while ((chosenSpot < 1 && chosenSpot > 9) || boardSpots[chosenSpot - 1] != '\0');
     boardSpots[chosenSpot - 1] = player.symbol;
     boardPrinter(boardSpots);
-    checkWinner(pGameConcluded);
+    checkWinner(player, boardSpots, pGameConcluded);
 }
 void play(Player first, Player second){
     char boardSpots[9] = {"\0"};
-    bool gameConcluded = true;
+    bool gameConcluded = false;
     do{
         playerTurn(first, boardSpots, &gameConcluded);
         if (!gameConcluded){ playerTurn(second, boardSpots, &gameConcluded);}
