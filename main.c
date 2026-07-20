@@ -17,6 +17,7 @@ void getName(char symbol, Player *pPlayer);
 
 int main(void){
     char first = '\0';
+    int charBuffer = '\0';
     Player xPlayer = {"", 'X'};
     Player oPlayer = {"", 'O'};
 
@@ -37,6 +38,7 @@ int main(void){
     do{
         printf("Who goes first, X or O?: ");
         first = getchar();
+        while ((charBuffer = getchar()) != '\n' && charBuffer != EOF);
     }while(first != 'X' && first != 'O');
 
     (first == 'X') ? play(xPlayer, oPlayer) : play(oPlayer, xPlayer);
