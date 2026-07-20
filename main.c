@@ -38,7 +38,9 @@ int main(void){
     do{
         printf("Who goes first, X or O?: ");
         first = getchar();
-        while ((charBuffer = getchar()) != '\n' && charBuffer != EOF);
+        if (first != '\n') {
+            while ((charBuffer = getchar()) != '\n' && charBuffer != EOF);
+        }
     }while(first != 'X' && first != 'O');
 
     (first == 'X') ? play(xPlayer, oPlayer) : play(oPlayer, xPlayer);
