@@ -11,13 +11,13 @@
 typedef struct{
     char *name;
     char symbol;
-    u_int32_t flag;
+    uint32_t flag;
 }Player;
 
 void boardPrinter(Player *pPlayer, Player *pOpponent);
-void checkConditionState(u_int32_t playerFlag, u_int32_t board, u_int32_t *pGameConcluded);
-void endOfTurn(char *name, u_int32_t gameConcluded);
-void playerTurn(Player *player, Player *opponent, u_int32_t *pGameConcluded);
+void checkConditionState(uint32_t playerFlag, uint32_t board, uint32_t *pGameConcluded);
+void endOfTurn(char *name, uint32_t gameConcluded);
+void playerTurn(Player *player, Player *opponent, uint32_t *pGameConcluded);
 void play(Player *pFirst, Player *pSecond);
 void getName(char symbol, Player *pPlayer);
 
@@ -60,9 +60,9 @@ int main(void){
 
 
 void boardPrinter(Player *pPlayer, Player *pOpponent){
-    u_int32_t board = pPlayer->flag | pOpponent->flag;
+    uint32_t board = pPlayer->flag | pOpponent->flag;
     for (int i = 0; i < 9; i++){
-        u_int32_t boardPosition = 1 << i;
+        uint32_t boardPosition = 1 << i;
 
         if (board & boardPosition){
             if (pPlayer->flag & boardPosition) {
@@ -79,8 +79,8 @@ void boardPrinter(Player *pPlayer, Player *pOpponent){
     }
     printf("\n\n");
 }
-void checkConditionState(u_int32_t playerFlag, u_int32_t board, u_int32_t *pGameConcluded){
-    const u_int32_t winningCombos[8] = {
+void checkConditionState(uint32_t playerFlag, uint32_t board, uint32_t *pGameConcluded){
+    const uint32_t winningCombos[8] = {
         0b000000111,
         0b000111000,
         0b111000000,
@@ -91,7 +91,7 @@ void checkConditionState(u_int32_t playerFlag, u_int32_t board, u_int32_t *pGame
         0b001010100
     };
 
-    const u_int32_t tieCondition = 0b111111111;
+    const uint32_t tieCondition = 0b111111111;
 
     for (int comboIn = 0; comboIn < 8; comboIn++){
         if ((playerFlag & winningCombos[comboIn]) == winningCombos[comboIn]) {
@@ -102,7 +102,7 @@ void checkConditionState(u_int32_t playerFlag, u_int32_t board, u_int32_t *pGame
 
     if ((board & tieCondition) == tieCondition) (*pGameConcluded) = 0x2;
 }
-void endOfTurn(char *name, u_int32_t gameConcluded){ 
+void endOfTurn(char *name, uint32_t gameConcluded){ 
     switch(gameConcluded){
         case WIN_CON_FLAG:
             printf("%s has won!\n", name);
@@ -113,7 +113,7 @@ void endOfTurn(char *name, u_int32_t gameConcluded){
     }
 }
 // (pPlayer->flag | pOpponent->flag) represents the board.
-void playerTurn(Player *pPlayer, Player *pOpponent, u_int32_t *pGameConcluded){
+void playerTurn(Player *pPlayer, Player *pOpponent, uint32_t *pGameConcluded){
     int chosenSpot = 0;
     do {
         printf("Which spot, %s? (1-9): ", pPlayer->name);
@@ -126,7 +126,7 @@ void playerTurn(Player *pPlayer, Player *pOpponent, u_int32_t *pGameConcluded){
     endOfTurn(pPlayer->name, *pGameConcluded);
 }
 void play(Player *pFirst, Player *pSecond){
-    u_int32_t gameConcluded = 0x0;
+    uint32_t gameConcluded = 0x0;
     do{
         playerTurn(pFirst, pSecond, &gameConcluded);
         if (!gameConcluded){ playerTurn(pSecond, pFirst, &gameConcluded); }
