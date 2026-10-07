@@ -13,3 +13,6 @@
 # Compiler
     GCC on Linux
 
+# 10/7/26
+    Just added bit manipulation to tic-tac-toe.
+
